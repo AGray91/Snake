@@ -1,95 +1,113 @@
 #include "Game.h"
-#include <iostream>
-#include <SFML/Graphics.hpp>
+#include "Player.h"
 
-#define SCREEN_WIDTH	800
-#define SCREEN_HEIGHT	600
-#define TITLE			"SNAKE"
-#define FRAMERATELIMIT	60
-
-#define TILE_SIZE		32
-#define ROWS			10
-#define COLUMNS			10
-
-// INPUT MAP
-#define ESCAPE			sf::Keyboard::Key::Escape
-#define UP				sf::Keyboard::Key::W
-#define DOWN			sf::Keyboard::Key::S
-#define LEFT			sf::Keyboard::Key::A
-#define RIGHT			sf::Keyboard::Key::D
-
-namespace AGSnake2D
+namespace AGSnake2D::Game
 {
-	sf::RenderWindow m_window;
-	sf::Clock m_clock;
-	sf::Time m_dt;
+	bool m_is_playing = true;
+	bool m_is_first_pass = true;
+	float m_refresh_rate;
+	float m_time_elapsed = 0;
 
-	float m_fps;
+	unsigned int m_tile_size;
+	unsigned int m_rows;
+	unsigned int m_columns;
+	sf::Vector2f m_position;
 
-	void input();
-	void update(float _dt);
-	void render();
+	DIRECTION m_direction;
+
+	sf::RectangleShape m_background;
 }
 
-void AGSnake2D::run_game()
+void AGSnake2D::Game::init(unsigned int tile_size, unsigned int rows, unsigned int columns, sf::Vector2f position, float refresh_rate)
 {
-	// Create Window...
-	m_window.create(sf::VideoMode(sf::Vector2u(SCREEN_WIDTH, SCREEN_HEIGHT)), TITLE, sf::Style::Default);
-	m_window.setFramerateLimit(FRAMERATELIMIT);
+	m_tile_size = tile_size;
+	m_rows = rows;
+	m_columns = columns;
 
-	m_fps = 0.0f;
+	m_refresh_rate = refresh_rate;
+	
+	m_background = sf::RectangleShape(sf::Vector2f(m_rows * m_tile_size, m_columns * m_tile_size));
+	m_background.setFillColor(sf::Color::Black);
+	m_background.setOutlineColor(sf::Color::White);
+	m_background.setOutlineThickness(2.0f);
 
-	// Main Loop...
-	while (m_window.isOpen())
-	{
-		m_dt = m_clock.restart();
-		m_fps = m_dt.asSeconds();
+	set_position(position);
 
-		input();
-		update(m_fps);
-		render();
-	}
+	AGSnake2D::Player::init(m_tile_size);
+	AGSnake2D::Player::set_position(sf::Vector2f(m_position.x + 10 * m_tile_size, m_position.y + 10 * m_tile_size));
 }
 
-void AGSnake2D::input()
+void AGSnake2D::Game::update(float dt)
 {
-	while (std::optional event = m_window.pollEvent())
+	m_time_elapsed += dt;
+
+	if (m_time_elapsed >= m_refresh_rate)
 	{
-		if (event->is<sf::Event::Closed>())
+		m_time_elapsed = 0;
+
+		if (!m_is_playing)
+			return;
+
+		switch (m_direction)
 		{
-			m_window.close();
-		}
-		else if (const sf::Event::KeyPressed* keyPressed = event->getIf<sf::Event::KeyPressed>())
-		{
-			switch (keyPressed->code)
-			{
-			case ESCAPE:
-				m_window.close();
-				break;
+		case DIRECTION::UP:
+			Player::set_position(sf::Vector2f(Player::get_position().x, Player::get_position().y - m_tile_size));
+			break;
 
-			case UP:
-				break;
+		case DIRECTION::DOWN:
+			Player::set_position(sf::Vector2f(Player::get_position().x, Player::get_position().y + m_tile_size));
+			break;
 
-			case DOWN:
-				break;
+		case DIRECTION::LEFT:
+			Player::set_position(sf::Vector2f(Player::get_position().x - m_tile_size, Player::get_position().y));
+			break;
 
-			case LEFT:
-				break;
-
-			case RIGHT:
-				break;
-			}
+		case DIRECTION::RIGHT:
+			Player::set_position(sf::Vector2f(Player::get_position().x + m_tile_size, Player::get_position().y));
+			break;
 		}
 	}
 }
 
-void AGSnake2D::update(float _fps)
+void AGSnake2D::Game::render(sf::RenderWindow& window)
 {
-
+	window.draw(m_background);
+	Player::render(window);
 }
 
-void AGSnake2D::render()
+void AGSnake2D::Game::set_is_playing(bool val)
 {
-	m_window.clear();
-	m_window.display();
+	m_is_playing = val;
+}
+
+void AGSnake2D::Game::set_position(sf::Vector2f new_pos)
+{
+	m_position = new_pos;
+	m_background.setPosition(m_position);
+}
+
+void AGSnake2D::Game::set_player_direction(DIRECTION _direction)
+{
+	switch (_direction)
+	{
+	case DIRECTION::UP:
+		if (m_direction != DIRECTION::DOWN)
+			m_direction = DIRECTION::UP;
+		break;
+
+	case DIRECTION::DOWN:
+		if (m_direction != DIRECTION::UP)
+			m_direction = DIRECTION::DOWN;
+		break;
+
+	case DIRECTION::LEFT:
+		if (m_direction != DIRECTION::RIGHT)
+			m_direction = DIRECTION::LEFT;
+		break;
+
+	case DIRECTION::RIGHT:
+		if (m_direction != DIRECTION::LEFT)
+			m_direction = DIRECTION::RIGHT;
+		break;
+	}
 }
