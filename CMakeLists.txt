@@ -48,3 +48,7 @@ add_custom_command(TARGET Snake POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_dire
 	"${SFML_ROOT}/bin"
 	"$<TARGET_FILE_DIR:Snake>"
 )
+
+if (MSVC AND MSVC_VERSION LESS 1930)
+	message(FATAL_ERROR "SMFL 3.0 only works with Visual Studio 2022 or above...")
+endif()

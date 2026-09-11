@@ -13,8 +13,8 @@
 #define COLUMNS			21
 
 // INPUT MAP
-#define K_ESCAPE			sf::Keyboard::Key::Escape
-#define K_UP				sf::Keyboard::Key::W
+#define K_ESCAPE		sf::Keyboard::Key::Escape
+#define K_UP			sf::Keyboard::Key::W
 #define K_DOWN			sf::Keyboard::Key::S
 #define K_LEFT			sf::Keyboard::Key::A
 #define K_RIGHT			sf::Keyboard::Key::D
