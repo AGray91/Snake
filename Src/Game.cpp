@@ -4,6 +4,7 @@
 namespace AGSnake2D::Game
 {
 	bool m_is_playing = true;
+	bool m_is_visible = true;
 	bool m_is_first_pass = true;
 	float m_refresh_rate;
 	float m_time_elapsed = 0;
@@ -80,13 +81,18 @@ void AGSnake2D::Game::set_is_playing(bool val)
 	m_is_playing = val;
 }
 
+void AGSnake2D::Game::set_is_visible(bool val)
+{
+	m_is_visible = val;
+}
+
 void AGSnake2D::Game::set_position(sf::Vector2f new_pos)
 {
 	m_position = new_pos;
 	m_background.setPosition(m_position);
 }
 
-void AGSnake2D::Game::set_player_direction(DIRECTION _direction)
+void AGSnake2D::Game::set_player_direction(DIRECTION _direction) 
 {
 	switch (_direction)
 	{

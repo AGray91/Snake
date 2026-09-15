@@ -1,6 +1,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
+#include "Main_Menu.h"
+#include "Game_Over_Menu.h"
 
 #define SCREEN_WIDTH	1200
 #define SCREEN_HEIGHT	800
@@ -13,8 +15,8 @@
 #define COLUMNS			21
 
 // INPUT MAP
-#define K_ESCAPE			sf::Keyboard::Key::Escape
-#define K_UP				sf::Keyboard::Key::W
+#define K_ESCAPE		sf::Keyboard::Key::Escape
+#define K_UP			sf::Keyboard::Key::W
 #define K_DOWN			sf::Keyboard::Key::S
 #define K_LEFT			sf::Keyboard::Key::A
 #define K_RIGHT			sf::Keyboard::Key::D
@@ -39,8 +41,18 @@ int main()
 	AGSnake2D::m_window.setFramerateLimit(FRAMERATE_LIMIT);
 	
 	// Set up game layout and initialise game...
-	sf::Vector2f game_pos = sf::Vector2f((SCREEN_WIDTH - ROWS * TILE_SIZE) / 2, (SCREEN_HEIGHT - COLUMNS * TILE_SIZE) / 2);
+	 sf::Vector2f game_pos = sf::Vector2f((SCREEN_WIDTH - ROWS * TILE_SIZE) / 2, (SCREEN_HEIGHT - COLUMNS * TILE_SIZE) / 2);
 	AGSnake2D::Game::init(TILE_SIZE, ROWS, COLUMNS, game_pos, REFRESH_RATE);
+
+	// DEBUG...
+	AGSnake2D::Game::set_is_visible(false);
+	AGSnake2D::Game::set_is_playing(false);
+
+	// Set up Main Menu UI...
+	AGSnake2D::Main_Menu::init(AGSnake2D::m_window);
+
+	// Set up Game Over UI...
+	AGSnake2D::Game_Over_Menu::init(AGSnake2D::m_window);
 	
 
 	// Main loop...
@@ -95,6 +107,7 @@ void AGSnake2D::input()
 
 void AGSnake2D::update(float _fps)
 {
+	Main_Menu::update(m_window);
 	Game::update(_fps);
 }
 
@@ -102,7 +115,10 @@ void AGSnake2D::render()
 {
 	m_window.clear();
 
+	
+	Main_Menu::render(m_window);
 	Game::render(m_window);
+	Game_Over_Menu::render(m_window);
 
 	m_window.display();
 }

@@ -18,6 +18,7 @@ namespace AGSnake2D
 		void render(sf::RenderWindow& window);
 
 		void set_is_playing(bool val);
+		void set_is_visible(bool val);
 		void set_position(sf::Vector2f new_pos);
 		void set_player_direction(DIRECTION _direction);
 	}
