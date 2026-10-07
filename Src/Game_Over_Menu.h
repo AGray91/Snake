@@ -11,6 +11,7 @@
 namespace AGSnake2D::Game_Over_Menu
 {
 	void init(sf::RenderWindow& window);
+	void handle_event(const sf::Event& event);
 	void render(sf::RenderWindow& window);
 
 	void set_is_visible(bool val);

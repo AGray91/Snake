@@ -14,20 +14,21 @@
 #define ROWS			21
 #define COLUMNS			21
 
-// INPUT MAP
-#define K_ESCAPE		sf::Keyboard::Key::Escape
-#define K_UP			sf::Keyboard::Key::W
-#define K_DOWN			sf::Keyboard::Key::S
-#define K_LEFT			sf::Keyboard::Key::A
-#define K_RIGHT			sf::Keyboard::Key::D
-
 namespace AGSnake2D
 {
+	enum EState
+	{
+		MAIN_MENU = 0,
+		GAME = 1,
+		END_MENU = 2
+	};
+
 	sf::RenderWindow m_window;
 	sf::Clock m_clock;
 	sf::Time m_dt;
 
 	float m_fps;
+	EState m_state;
 
 	void input();
 	void update(float _dt);
@@ -52,7 +53,9 @@ int main()
 	AGSnake2D::Main_Menu::init(AGSnake2D::m_window);
 
 	// Set up Game Over UI...
-	AGSnake2D::Game_Over_Menu::init(AGSnake2D::m_window);
+	 AGSnake2D::Game_Over_Menu::init(AGSnake2D::m_window);
+
+	 AGSnake2D::m_state = AGSnake2D::EState::MAIN_MENU;
 	
 
 	// Main loop...
@@ -77,28 +80,20 @@ void AGSnake2D::input()
 		{
 			m_window.close();
 		}
-		else if (const sf::Event::KeyPressed* keyPressed = event->getIf<sf::Event::KeyPressed>())
+		else
 		{
-			switch (keyPressed->code)
+			switch (m_state)
 			{
-			case K_ESCAPE:
-				m_window.close();
+			case MAIN_MENU:
+				AGSnake2D::Main_Menu::handle_event(event);
 				break;
 
-			case K_UP:
-				Game::set_player_direction(DIRECTION::UP);
+			case GAME:
+				AGSnake2D::Game::handle_event(event);
 				break;
 
-			case K_DOWN:
-				Game::set_player_direction(DIRECTION::DOWN);
-				break;
-
-			case K_LEFT:
-				Game::set_player_direction(DIRECTION::LEFT);
-				break;
-
-			case K_RIGHT:
-				Game::set_player_direction(DIRECTION::RIGHT);
+			case END_MENU:
+				AGSnake2D::Game_Over_Menu::handle_event(event);
 				break;
 			}
 		}
@@ -107,8 +102,19 @@ void AGSnake2D::input()
 
 void AGSnake2D::update(float _fps)
 {
-	Main_Menu::update(m_window);
-	Game::update(_fps);
+	switch (m_state)
+	{
+	case MAIN_MENU:
+		AGSnake2D::Main_Menu::update(m_window);
+		break;
+
+	case GAME:
+		AGSnake2D::Game::update(_fps);
+		break;
+
+	case END_MENU:
+		break;
+	}
 }
 
 void AGSnake2D::render()
@@ -116,9 +122,20 @@ void AGSnake2D::render()
 	m_window.clear();
 
 	
-	Main_Menu::render(m_window);
-	Game::render(m_window);
-	Game_Over_Menu::render(m_window);
+	switch (m_state)
+	{
+	case MAIN_MENU:
+		AGSnake2D::Main_Menu::render(m_window);
+		break;
+
+	case GAME:
+		AGSnake2D::Game::render(m_window);
+		break;
+
+	case END_MENU:
+		AGSnake2D::Game_Over_Menu::render(m_window);
+		break;
+	}
 
 	m_window.display();
 }

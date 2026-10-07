@@ -18,6 +18,7 @@
 namespace AGSnake2D::Main_Menu
 {
 	void init(sf::RenderWindow& window);
+	void handle_event(const sf::Event& event);
 	void render(sf::RenderWindow& window);
 	void update(sf::RenderWindow& window);
 

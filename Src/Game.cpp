@@ -38,6 +38,31 @@ void AGSnake2D::Game::init(unsigned int tile_size, unsigned int rows, unsigned i
 	AGSnake2D::Player::set_position(sf::Vector2f(m_position.x + 10 * m_tile_size, m_position.y + 10 * m_tile_size));
 }
 
+void AGSnake2D::Game::handle_event(const sf::Event& event)
+{
+	if (const sf::Event::KeyPressed* keyPressed = event.getIf<sf::Event::KeyPressed>())
+	{
+		switch (keyPressed->code)
+		{
+		case K_UP:
+			Game::set_player_direction(DIRECTION::UP);
+			break;
+
+		case K_DOWN:
+			Game::set_player_direction(DIRECTION::DOWN);
+			break;
+
+		case K_LEFT:
+			Game::set_player_direction(DIRECTION::LEFT);
+			break;
+
+		case K_RIGHT:
+			Game::set_player_direction(DIRECTION::RIGHT);
+			break;
+		}
+	}
+}
+
 void AGSnake2D::Game::update(float dt)
 {
 	m_time_elapsed += dt;
@@ -72,6 +97,9 @@ void AGSnake2D::Game::update(float dt)
 
 void AGSnake2D::Game::render(sf::RenderWindow& window)
 {
+	if (!m_is_visible)
+		return;
+
 	window.draw(m_background);
 	Player::render(window);
 }

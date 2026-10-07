@@ -6,6 +6,7 @@ namespace AGSnake2D::Main_Menu
 	sf::RectangleShape m_play_btn;
 
 	bool m_is_visible = false;
+	bool m_play_btn_mouse_hover = false;
 
 	void render_title(sf::RenderWindow& window);
 	void render_play(sf::RenderWindow& window);
@@ -22,6 +23,11 @@ void AGSnake2D::Main_Menu::init(sf::RenderWindow& window)
 	m_play_btn.setPosition(sf::Vector2f((window.getSize().x - PLAY_BTN_WIDTH) / 2 , 400));
 
 	m_is_visible = true;
+}
+
+void AGSnake2D::Main_Menu::handle_event(const sf::Event& event)
+{
+
 }
 
 void AGSnake2D::Main_Menu::render(sf::RenderWindow& window)
@@ -42,9 +48,9 @@ void AGSnake2D::Main_Menu::update(sf::RenderWindow& window)
 	sf::Vector2f mouse_pos_2f = sf::Vector2f(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y));
 
 	if (m_play_btn.getGlobalBounds().contains(mouse_pos_2f))
-		m_play_btn.setFillColor(PLAY_HIGHLIGHT);
+		m_play_btn_mouse_hover = true;
 	else
-		m_play_btn.setFillColor(sf::Color::Black);
+		m_play_btn_mouse_hover = false;
 }
 
 void AGSnake2D::Main_Menu::render_title(sf::RenderWindow& window)
@@ -60,6 +66,11 @@ void AGSnake2D::Main_Menu::render_title(sf::RenderWindow& window)
 
 void AGSnake2D::Main_Menu::render_play(sf::RenderWindow& window)
 {
+	if (m_play_btn_mouse_hover)
+		m_play_btn.setFillColor(PLAY_HIGHLIGHT);
+	else
+		m_play_btn.setFillColor(sf::Color::Black);
+
 	sf::Text m_txt_play(m_font);
 	m_txt_play.setString(PLAY);
 	m_txt_play.setCharacterSize(PLAY_CHARSIZE);

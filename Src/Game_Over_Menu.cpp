@@ -14,6 +14,11 @@ void AGSnake2D::Game_Over_Menu::init(sf::RenderWindow& window)
 	m_background.setSize(sf::Vector2f(window.getSize()));
 }
 
+void AGSnake2D::Game_Over_Menu::handle_event(const sf::Event& event)
+{
+
+}
+
 void AGSnake2D::Game_Over_Menu::render(sf::RenderWindow& window)
 {
 	m_background.setFillColor(BACKGROUND_COLOUR);

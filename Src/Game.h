@@ -1,6 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+// INPUT MAP
+#define K_ESCAPE		sf::Keyboard::Key::Escape
+#define K_UP			sf::Keyboard::Key::W
+#define K_DOWN			sf::Keyboard::Key::S
+#define K_LEFT			sf::Keyboard::Key::A
+#define K_RIGHT			sf::Keyboard::Key::D
+
 namespace AGSnake2D
 {
 	enum DIRECTION
@@ -14,6 +21,7 @@ namespace AGSnake2D
 	namespace Game
 	{
 		void init(unsigned int tile_size, unsigned int rows, unsigned int columns, sf::Vector2f position, float refresh_rate);
+		void handle_event(const sf::Event& event);
 		void update(float dt);
 		void render(sf::RenderWindow& window);
 
