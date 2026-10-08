@@ -17,6 +17,10 @@ namespace AGSnake2D::Game
 	DIRECTION m_direction;
 
 	sf::RectangleShape m_background;
+
+	std::function<void()> m_delegate_game_over;
+
+	void check_bounds();
 }
 
 void AGSnake2D::Game::init(unsigned int tile_size, unsigned int rows, unsigned int columns, sf::Vector2f position, float refresh_rate)
@@ -93,6 +97,9 @@ void AGSnake2D::Game::update(float dt)
 			break;
 		}
 	}
+
+	// Check if Player has gone out of bounds...
+	check_bounds();
 }
 
 void AGSnake2D::Game::render(sf::RenderWindow& window)
@@ -143,5 +150,21 @@ void AGSnake2D::Game::set_player_direction(DIRECTION _direction)
 		if (m_direction != DIRECTION::LEFT)
 			m_direction = DIRECTION::RIGHT;
 		break;
+	}
+}
+
+void AGSnake2D::Game::bind_game_over(std::function<void()> delegate)
+{
+	m_delegate_game_over = delegate;
+}
+
+void AGSnake2D::Game::check_bounds()
+{
+	if (!m_background.getGlobalBounds().contains(Player::get_position()))
+	{
+		m_is_playing = false;
+
+		if (m_delegate_game_over)
+			m_delegate_game_over();
 	}
 }

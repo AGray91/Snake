@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <functional>
 
 #define MAX_STRING_LEN 32
 #define FONT "..\\..\\..\\Assets\\Fonts\\KOMIKAP_.ttf"
@@ -21,6 +22,8 @@ namespace AGSnake2D::Main_Menu
 	void handle_event(const sf::Event& event);
 	void render(sf::RenderWindow& window);
 	void update(sf::RenderWindow& window);
+
+	void bind_play_btn_onclick(std::function<void()> delegate);
 
 	void set_is_visible(bool val);
 	bool get_is_visible();

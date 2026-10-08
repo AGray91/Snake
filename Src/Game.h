@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <functional>
 
 // INPUT MAP
 #define K_ESCAPE		sf::Keyboard::Key::Escape
@@ -29,5 +30,7 @@ namespace AGSnake2D
 		void set_is_visible(bool val);
 		void set_position(sf::Vector2f new_pos);
 		void set_player_direction(DIRECTION _direction);
+
+		void bind_game_over(std::function<void()> delegate);
 	}
 }

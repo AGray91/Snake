@@ -30,9 +30,19 @@ namespace AGSnake2D
 	float m_fps;
 	EState m_state;
 
+	bool m_timer_active;
+	float m_timer_time;
+	float m_timer_target;
+
 	void input();
 	void update(float _dt);
 	void render();
+
+	void start_game();
+	void end_game();
+
+	void start_timer();
+	void update_timer(float elasped);
 }
 
 int main()
@@ -46,16 +56,23 @@ int main()
 	AGSnake2D::Game::init(TILE_SIZE, ROWS, COLUMNS, game_pos, REFRESH_RATE);
 
 	// DEBUG...
-	AGSnake2D::Game::set_is_visible(false);
 	AGSnake2D::Game::set_is_playing(false);
+	AGSnake2D::Game::bind_game_over(AGSnake2D::end_game);
 
 	// Set up Main Menu UI...
 	AGSnake2D::Main_Menu::init(AGSnake2D::m_window);
+	AGSnake2D::Main_Menu::bind_play_btn_onclick(AGSnake2D::start_game);
 
 	// Set up Game Over UI...
 	 AGSnake2D::Game_Over_Menu::init(AGSnake2D::m_window);
 
+	 // Set initial state...
 	 AGSnake2D::m_state = AGSnake2D::EState::MAIN_MENU;
+
+	 // Set up time management...
+	 AGSnake2D::m_timer_active = false;
+	 AGSnake2D::m_timer_time = 0;
+	 AGSnake2D::m_timer_target = 5.0f;
 	
 
 	// Main loop...
@@ -63,6 +80,9 @@ int main()
 	{
 		AGSnake2D::m_dt = AGSnake2D::m_clock.restart();
 		AGSnake2D::m_fps = AGSnake2D::m_dt.asSeconds();
+
+		if (AGSnake2D::m_timer_active)
+			AGSnake2D::update_timer(AGSnake2D::m_fps);
 
 		AGSnake2D::input();
 		AGSnake2D::update(AGSnake2D::m_fps);
@@ -85,15 +105,15 @@ void AGSnake2D::input()
 			switch (m_state)
 			{
 			case MAIN_MENU:
-				AGSnake2D::Main_Menu::handle_event(event);
+				AGSnake2D::Main_Menu::handle_event(*event);
 				break;
 
 			case GAME:
-				AGSnake2D::Game::handle_event(event);
+				AGSnake2D::Game::handle_event(*event);
 				break;
 
 			case END_MENU:
-				AGSnake2D::Game_Over_Menu::handle_event(event);
+				AGSnake2D::Game_Over_Menu::handle_event(*event);
 				break;
 			}
 		}
@@ -138,4 +158,34 @@ void AGSnake2D::render()
 	}
 
 	m_window.display();
+}
+
+void AGSnake2D::start_game()
+{
+	m_state = EState::GAME;
+	Game::set_is_playing(true);
+}
+
+void AGSnake2D::end_game()
+{
+	m_state = EState::END_MENU;
+	start_timer();
+}
+
+void AGSnake2D::start_timer()
+{
+	m_timer_active = true;
+	m_timer_time = 0.0;
+}
+
+void AGSnake2D::update_timer(float elapsed)
+{
+	m_timer_time += elapsed;
+
+	if (m_timer_time > m_timer_target)
+	{
+		m_timer_time = 0.0f;
+		m_timer_active = false;
+		m_state = EState::MAIN_MENU;
+	}
 }

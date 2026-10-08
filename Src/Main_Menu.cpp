@@ -7,6 +7,9 @@ namespace AGSnake2D::Main_Menu
 
 	bool m_is_visible = false;
 	bool m_play_btn_mouse_hover = false;
+	bool m_mouse_btn_down = false;
+
+	std::function<void()> m_delegate_play_btn_onclick;
 
 	void render_title(sf::RenderWindow& window);
 	void render_play(sf::RenderWindow& window);
@@ -27,7 +30,14 @@ void AGSnake2D::Main_Menu::init(sf::RenderWindow& window)
 
 void AGSnake2D::Main_Menu::handle_event(const sf::Event& event)
 {
-
+	if (event.getIf<sf::Event::MouseButtonPressed>())
+	{
+		m_mouse_btn_down = true;
+	}
+	else if (event.getIf<sf::Event::MouseButtonReleased>())
+	{
+		m_mouse_btn_down = false;
+	}
 }
 
 void AGSnake2D::Main_Menu::render(sf::RenderWindow& window)
@@ -41,16 +51,31 @@ void AGSnake2D::Main_Menu::render(sf::RenderWindow& window)
 
 void AGSnake2D::Main_Menu::update(sf::RenderWindow& window)
 {
-	if (!m_is_visible)
+	if (!m_is_visible) 
 		return;
 
 	sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
 	sf::Vector2f mouse_pos_2f = sf::Vector2f(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y));
 
 	if (m_play_btn.getGlobalBounds().contains(mouse_pos_2f))
+	{
 		m_play_btn_mouse_hover = true;
+		
+		if (m_mouse_btn_down)
+		{
+			if (m_delegate_play_btn_onclick)
+				m_delegate_play_btn_onclick();
+		}
+	}
 	else
+	{
 		m_play_btn_mouse_hover = false;
+	}
+}
+
+void AGSnake2D::Main_Menu::bind_play_btn_onclick(std::function<void()> delegate)
+{
+	m_delegate_play_btn_onclick = delegate;
 }
 
 void AGSnake2D::Main_Menu::render_title(sf::RenderWindow& window)
