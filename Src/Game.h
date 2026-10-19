@@ -25,6 +25,7 @@ namespace AGSnake2D
 		void handle_event(const sf::Event& event);
 		void update(float dt);
 		void render(sf::RenderWindow& window);
+		void start_game();	// Start or Restart game...
 
 		void set_is_playing(bool val);
 		void set_is_visible(bool val);

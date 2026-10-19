@@ -37,9 +37,14 @@ void AGSnake2D::Game::init(unsigned int tile_size, unsigned int rows, unsigned i
 	m_background.setOutlineThickness(2.0f);
 
 	set_position(position);
+}
 
+void AGSnake2D::Game::start_game()
+{
 	AGSnake2D::Player::init(m_tile_size);
 	AGSnake2D::Player::set_position(sf::Vector2f(m_position.x + 10 * m_tile_size, m_position.y + 10 * m_tile_size));
+
+	set_is_playing(true);
 }
 
 void AGSnake2D::Game::handle_event(const sf::Event& event)
@@ -160,6 +165,21 @@ void AGSnake2D::Game::bind_game_over(std::function<void()> delegate)
 
 void AGSnake2D::Game::check_bounds()
 {
+	sf::Vector2f bg_pos = m_background.getPosition();
+	sf::Vector2f bg_size = bg_pos + m_background.getSize();
+
+	sf::Vector2f p_pos = Player::get_position();
+	sf::Vector2f p_size = p_pos + Player::get_size();
+
+	if (p_pos.x < bg_pos.x || p_pos.y < bg_pos.y || p_size.x > bg_size.x || p_size.y > bg_size.y)
+	{
+		m_is_playing = false;
+
+		if (m_delegate_game_over)
+			m_delegate_game_over();
+	}
+
+	/*
 	if (!m_background.getGlobalBounds().contains(Player::get_position()))
 	{
 		m_is_playing = false;
@@ -167,4 +187,5 @@ void AGSnake2D::Game::check_bounds()
 		if (m_delegate_game_over)
 			m_delegate_game_over();
 	}
+	*/
 }
