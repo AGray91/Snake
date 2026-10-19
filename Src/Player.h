@@ -1,12 +1,19 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include "Sprite.h"
+#include <memory>
 
-namespace AGSnake2D::Player
+namespace AGSnake2D
 {
-	void init(unsigned int tile_size);
-	void render(sf::RenderWindow& window);
+	class Player : public Sprite
+	{
+	public:
+		Player(unsigned int tile_size, unsigned int rows, unsigned int columns);
 
-	void set_position(sf::Vector2f pos);
-	sf::Vector2f get_position();
-	sf::Vector2f get_size();
+		void update_tail();
+		void render(sf::RenderWindow& window) override;
+		void add_tail(sf::Vector2f coords);
+
+	protected:
+		std::vector<sf::Vector2f> m_tail_coords;
+	};
 }

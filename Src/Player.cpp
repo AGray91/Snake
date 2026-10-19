@@ -1,39 +1,40 @@
 #include "Player.h"
 
-namespace AGSnake2D::Player
+AGSnake2D::Player::Player(unsigned int tile_size, unsigned int rows, unsigned int columns) : Sprite(tile_size)
 {
-	bool initialised = false;
-	sf::Vector2f m_position;
-	sf::RectangleShape m_shape;
+	m_tail_coords.reserve(rows * columns);
+	m_shape.setFillColor(sf::Color::Green);
 }
 
-void AGSnake2D::Player::init(unsigned int tile_size)
+void AGSnake2D::Player::update_tail()
 {
-	m_shape.setFillColor(sf::Color::Green);
-	m_shape.setSize(sf::Vector2f(tile_size, tile_size));
+	if (m_tail_coords.size() < 1)
+		return;
+
+	for (size_t i = m_tail_coords.size() - 1; i > 0; i--)
+	{
+		m_tail_coords[i] = m_tail_coords[i--];
+	}
+
+	m_tail_coords[0] = m_position;
 }
 
 void AGSnake2D::Player::render(sf::RenderWindow& window)
 {
 	m_shape.setPosition(m_position);
 	window.draw(m_shape);
+
+	if (m_tail_coords.size() < 1)
+		return;
+
+	for (size_t i = 0; i < m_tail_coords.size(); i++)
+	{
+		sf::RectangleShape tail_shape(m_tail_coords[i]);
+		window.draw(tail_shape);
+	}
 }
 
-void AGSnake2D::Player::set_position(sf::Vector2f pos)
+void AGSnake2D::Player::add_tail(sf::Vector2f coords)
 {
-	m_position = pos;
-}
-
-sf::Vector2f AGSnake2D::Player::get_position()
-{
-	sf::Vector2f retVal = sf::Vector2f(0, 0);
-
-	retVal = m_position;
-
-	return retVal;
-}
-
-sf::Vector2f AGSnake2D::Player::get_size()
-{
-	return m_shape.getSize();
+	m_tail_coords.push_back(coords);
 }
