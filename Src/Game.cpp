@@ -20,6 +20,8 @@ namespace AGSnake2D::Game
 
 	std::function<void()> m_delegate_game_over;
 
+	Player m_player(0, 0, 0);
+
 	void check_bounds();
 }
 
@@ -41,8 +43,8 @@ void AGSnake2D::Game::init(unsigned int tile_size, unsigned int rows, unsigned i
 
 void AGSnake2D::Game::start_game()
 {
-	AGSnake2D::Player::init(m_tile_size);
-	AGSnake2D::Player::set_position(sf::Vector2f(m_position.x + 10 * m_tile_size, m_position.y + 10 * m_tile_size));
+	m_player = Player(m_tile_size, m_rows, m_columns);
+	m_player.set_position(sf::Vector2f(m_position.x + 10 * m_tile_size, m_position.y + 10 * m_tile_size));
 
 	set_is_playing(true);
 }
@@ -86,25 +88,25 @@ void AGSnake2D::Game::update(float dt)
 		switch (m_direction)
 		{
 		case DIRECTION::UP:
-			Player::set_position(sf::Vector2f(Player::get_position().x, Player::get_position().y - m_tile_size));
+			m_player.set_position(sf::Vector2f(m_player.get_position().x, m_player.get_position().y - m_tile_size));
 			break;
 
 		case DIRECTION::DOWN:
-			Player::set_position(sf::Vector2f(Player::get_position().x, Player::get_position().y + m_tile_size));
+			m_player.set_position(sf::Vector2f(m_player.get_position().x, m_player.get_position().y + m_tile_size));
 			break;
 
 		case DIRECTION::LEFT:
-			Player::set_position(sf::Vector2f(Player::get_position().x - m_tile_size, Player::get_position().y));
+			m_player.set_position(sf::Vector2f(m_player.get_position().x - m_tile_size, m_player.get_position().y));
 			break;
 
 		case DIRECTION::RIGHT:
-			Player::set_position(sf::Vector2f(Player::get_position().x + m_tile_size, Player::get_position().y));
+			m_player.set_position(sf::Vector2f(m_player.get_position().x + m_tile_size, m_player.get_position().y));
 			break;
 		}
-	}
 
-	// Check if Player has gone out of bounds...
-	check_bounds();
+		m_player.update_tail();
+		check_bounds();	// Check if Player has gone out of bounds...
+	}
 }
 
 void AGSnake2D::Game::render(sf::RenderWindow& window)
@@ -113,7 +115,7 @@ void AGSnake2D::Game::render(sf::RenderWindow& window)
 		return;
 
 	window.draw(m_background);
-	Player::render(window);
+	m_player.render(window);
 }
 
 void AGSnake2D::Game::set_is_playing(bool val)
@@ -168,8 +170,8 @@ void AGSnake2D::Game::check_bounds()
 	sf::Vector2f bg_pos = m_background.getPosition();
 	sf::Vector2f bg_size = bg_pos + m_background.getSize();
 
-	sf::Vector2f p_pos = Player::get_position();
-	sf::Vector2f p_size = p_pos + Player::get_size();
+	sf::Vector2f p_pos = m_player.get_position();
+	sf::Vector2f p_size = p_pos + m_player.get_size();
 
 	if (p_pos.x < bg_pos.x || p_pos.y < bg_pos.y || p_size.x > bg_size.x || p_size.y > bg_size.y)
 	{
@@ -178,14 +180,4 @@ void AGSnake2D::Game::check_bounds()
 		if (m_delegate_game_over)
 			m_delegate_game_over();
 	}
-
-	/*
-	if (!m_background.getGlobalBounds().contains(Player::get_position()))
-	{
-		m_is_playing = false;
-
-		if (m_delegate_game_over)
-			m_delegate_game_over();
-	}
-	*/
 }
