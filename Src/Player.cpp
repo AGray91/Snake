@@ -32,3 +32,8 @@ sf::Vector2f AGSnake2D::Player::get_position()
 
 	return retVal;
 }
+
+sf::Vector2f AGSnake2D::Player::get_size()
+{
+	return m_shape.getSize();
+}

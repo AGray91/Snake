@@ -8,4 +8,5 @@ namespace AGSnake2D::Player
 
 	void set_position(sf::Vector2f pos);
 	sf::Vector2f get_position();
+	sf::Vector2f get_size();
 }
