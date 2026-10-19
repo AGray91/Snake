@@ -163,7 +163,7 @@ void AGSnake2D::render()
 void AGSnake2D::start_game()
 {
 	m_state = EState::GAME;
-	Game::set_is_playing(true);
+	Game::start_game();
 }
 
 void AGSnake2D::end_game()
@@ -186,6 +186,7 @@ void AGSnake2D::update_timer(float elapsed)
 	{
 		m_timer_time = 0.0f;
 		m_timer_active = false;
+		Main_Menu::reset();
 		m_state = EState::MAIN_MENU;
 	}
 }
