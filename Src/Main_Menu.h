@@ -22,6 +22,7 @@ namespace AGSnake2D::Main_Menu
 	void handle_event(const sf::Event& event);
 	void render(sf::RenderWindow& window);
 	void update(sf::RenderWindow& window);
+	void reset();
 
 	void bind_play_btn_onclick(std::function<void()> delegate);
 

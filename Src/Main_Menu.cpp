@@ -28,6 +28,12 @@ void AGSnake2D::Main_Menu::init(sf::RenderWindow& window)
 	m_is_visible = true;
 }
 
+void AGSnake2D::Main_Menu::reset()
+{
+	m_play_btn_mouse_hover = false;
+	m_mouse_btn_down = false;
+}
+
 void AGSnake2D::Main_Menu::handle_event(const sf::Event& event)
 {
 	if (event.getIf<sf::Event::MouseButtonPressed>())
