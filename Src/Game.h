@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include "Player.h"
+#include "Random_Gen.h"
 
 // INPUT MAP
 #define K_ESCAPE		sf::Keyboard::Key::Escape
@@ -12,14 +13,6 @@
 
 namespace AGSnake2D
 {
-	enum DIRECTION
-	{
-		UP = 0,
-		DOWN = 2,
-		LEFT = 4,
-		RIGHT = 8
-	};
-
 	class Game
 	{
 	public:
@@ -48,16 +41,23 @@ namespace AGSnake2D
 		unsigned int m_columns;
 		sf::Vector2f m_position;
 
+		bool m_apple_caught;
+
 		DIRECTION m_direction;
 
 		sf::RectangleShape m_background;
 
 		std::function<void()> m_delegate_game_over;
 
+		std::unique_ptr<Random_Gen> m_random_gen;
+
 		std::unique_ptr<Player> m_player;
+		std::unique_ptr<Sprite> m_apple;
 
 		// Methods...
 		void check_bounds();
 		void set_player_direction(DIRECTION _direction);
+		bool is_apple_caught();
+		void next_apple();
 	};
 }

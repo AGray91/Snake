@@ -18,15 +18,31 @@ AGSnake2D::Game::Game(unsigned int tile_size, unsigned int rows, unsigned int co
 	m_is_first_pass = true;
 	m_time_elapsed = 0.0f;
 
+	m_apple_caught = false;
+
 	m_direction = DIRECTION::UP;
+
+	m_random_gen = std::make_unique<Random_Gen>();
 }
 
 void AGSnake2D::Game::restart()
 {
+	// Spawn new Player...
 	m_player.reset();
 	m_player = std::make_unique<Player>(m_tile_size, m_rows, m_columns);
-	m_player->set_position(sf::Vector2f(m_position.x + 10 * m_tile_size, m_position.y + 10 * m_tile_size));
+	// Place Player at the center of the game world...
+	m_player->set_position(sf::Vector2f(m_position.x + (m_rows / 2) * m_tile_size, m_position.y + (m_columns / 2) * m_tile_size));
 
+	// Spawn new Apple...
+	m_apple.reset();
+	m_apple = std::make_unique<Sprite>(m_tile_size);
+	m_apple->set_colour(sf::Color::Red);
+
+	float rand_x = m_random_gen->range(0, m_rows) * m_tile_size;
+	float rand_y = m_random_gen->range(0, m_columns) * m_tile_size;
+	m_apple->set_position(sf::Vector2f(m_position.x + rand_x, m_position.y + rand_y));
+
+	// Set game playing...
 	set_is_playing(true);
 }
 
@@ -61,6 +77,11 @@ void AGSnake2D::Game::update(float dt)
 
 	if (m_time_elapsed >= m_refresh_rate)
 	{
+		if (m_apple_caught)
+			next_apple();
+
+		m_player->update_tail();
+
 		m_time_elapsed = 0;
 
 		if (!m_is_playing)
@@ -85,8 +106,10 @@ void AGSnake2D::Game::update(float dt)
 			break;
 		}
 
-		m_player->update_tail();
+		
 		check_bounds();	// Check if Player has gone out of bounds...
+
+		m_apple_caught = is_apple_caught();
 	}
 }
 
@@ -97,6 +120,7 @@ void AGSnake2D::Game::render(sf::RenderWindow& window)
 
 	window.draw(m_background);
 	m_player->render(window);
+	m_apple->render(window);
 }
 
 void AGSnake2D::Game::set_is_playing(bool val)
@@ -141,6 +165,22 @@ void AGSnake2D::Game::set_player_direction(DIRECTION _direction)
 	}
 }
 
+bool AGSnake2D::Game::is_apple_caught()
+{
+	bool retval = false;
+
+	unsigned int player_row = (m_player->get_position().x / m_tile_size) - m_position.x;
+	unsigned int player_col = (m_player->get_position().y / m_tile_size) - m_position.y;
+
+	unsigned int apple_row = (m_apple->get_position().x / m_tile_size) - m_position.x;
+	unsigned int apple_col = (m_apple->get_position().y / m_tile_size) - m_position.y;
+
+	if (player_row == apple_row && player_col == apple_col)
+		retval = true;
+
+	return retval;
+}
+
 void AGSnake2D::Game::bind_game_over(std::function<void()> delegate)
 {
 	m_delegate_game_over = delegate;
@@ -161,4 +201,17 @@ void AGSnake2D::Game::check_bounds()
 		if (m_delegate_game_over)
 			m_delegate_game_over();
 	}
+}
+
+void AGSnake2D::Game::next_apple()
+{
+	m_apple.reset();
+	m_apple = std::make_unique<Sprite>(m_tile_size);
+	m_apple->set_colour(sf::Color::Red);
+
+	float rand_x = m_random_gen->range(0, m_rows) * m_tile_size;
+	float rand_y = m_random_gen->range(0, m_columns) * m_tile_size;
+	m_apple->set_position(sf::Vector2f(m_position.x + rand_x, m_position.y + rand_y));
+
+	m_player->add_tail(m_direction);
 }
