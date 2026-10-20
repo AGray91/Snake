@@ -4,6 +4,14 @@
 
 namespace AGSnake2D
 {
+	enum DIRECTION
+	{
+		UP = 0,
+		DOWN = 2,
+		LEFT = 4,
+		RIGHT = 8
+	};
+
 	class Player : public Sprite
 	{
 	public:
@@ -11,7 +19,7 @@ namespace AGSnake2D
 
 		void update_tail();
 		void render(sf::RenderWindow& window) override;
-		void add_tail(sf::Vector2f coords);
+		void add_tail(DIRECTION direction);
 
 	protected:
 		std::vector<sf::Vector2f> m_tail_coords;
