@@ -34,6 +34,8 @@ namespace AGSnake2D
 	float m_timer_time;
 	float m_timer_target;
 
+	std::unique_ptr<Game> m_game;
+
 	void input();
 	void update(float _dt);
 	void render();
@@ -52,12 +54,10 @@ int main()
 	AGSnake2D::m_window.setFramerateLimit(FRAMERATE_LIMIT);
 	
 	// Set up game layout and initialise game...
-	 sf::Vector2f game_pos = sf::Vector2f((SCREEN_WIDTH - ROWS * TILE_SIZE) / 2, (SCREEN_HEIGHT - COLUMNS * TILE_SIZE) / 2);
-	AGSnake2D::Game::init(TILE_SIZE, ROWS, COLUMNS, game_pos, REFRESH_RATE);
-
-	// DEBUG...
-	AGSnake2D::Game::set_is_playing(false);
-	AGSnake2D::Game::bind_game_over(AGSnake2D::end_game);
+	AGSnake2D::m_game = std::make_unique<AGSnake2D::Game>(TILE_SIZE, ROWS, COLUMNS, REFRESH_RATE);
+	sf::Vector2f game_pos = sf::Vector2f((SCREEN_WIDTH - ROWS * TILE_SIZE) / 2, (SCREEN_HEIGHT - COLUMNS * TILE_SIZE) / 2);
+	AGSnake2D::m_game->set_position(game_pos);
+	AGSnake2D::m_game->bind_game_over(AGSnake2D::end_game);
 
 	// Set up Main Menu UI...
 	AGSnake2D::Main_Menu::init(AGSnake2D::m_window);
@@ -109,7 +109,7 @@ void AGSnake2D::input()
 				break;
 
 			case GAME:
-				AGSnake2D::Game::handle_event(*event);
+				m_game->input(*event);
 				break;
 
 			case END_MENU:
@@ -129,7 +129,7 @@ void AGSnake2D::update(float _fps)
 		break;
 
 	case GAME:
-		AGSnake2D::Game::update(_fps);
+		m_game->update(_fps);
 		break;
 
 	case END_MENU:
@@ -149,7 +149,7 @@ void AGSnake2D::render()
 		break;
 
 	case GAME:
-		AGSnake2D::Game::render(m_window);
+		m_game->render(m_window);
 		break;
 
 	case END_MENU:
@@ -163,7 +163,7 @@ void AGSnake2D::render()
 void AGSnake2D::start_game()
 {
 	m_state = EState::GAME;
-	Game::start_game();
+	m_game->restart();
 }
 
 void AGSnake2D::end_game()
