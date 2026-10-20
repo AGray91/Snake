@@ -2,12 +2,18 @@
 
 AGSnake2D::Sprite::Sprite(unsigned int tile_size)
 {
+	m_tile_size = tile_size;
 	m_shape.setSize(sf::Vector2f(tile_size, tile_size));
 }
 
 void AGSnake2D::Sprite::set_position(sf::Vector2f new_pos)
 {
 	m_position = new_pos;
+}
+
+void AGSnake2D::Sprite::set_colour(sf::Color color)
+{
+	m_shape.setFillColor(color);
 }
 
 sf::Vector2f AGSnake2D::Sprite::get_position()

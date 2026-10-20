@@ -11,10 +11,13 @@ namespace AGSnake2D
 		virtual void render(sf::RenderWindow& window);
 
 		void set_position(sf::Vector2f new_pos);
+		void set_colour(sf::Color color);
 		sf::Vector2f get_position();
 		sf::Vector2f get_size();
 
+
 	protected:
+		unsigned int m_tile_size;
 		sf::RectangleShape m_shape;
 		sf::Vector2f m_position;
 	};
